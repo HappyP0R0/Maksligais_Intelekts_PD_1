@@ -186,7 +186,7 @@ namespace Maksligais_Intelekts_PD_1
             }
             else
             {
-                Winner_name.Text = player_name;
+                Winner_name.Text = ai_name;
             }
         }
 
