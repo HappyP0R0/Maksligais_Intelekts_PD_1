@@ -44,6 +44,7 @@ namespace Maksligais_Intelekts_PD_1
             InitializeComponent();
         }
 
+        // Create a line of 8 random numbers from 0 to 2
         private void button2_Click(object sender, EventArgs e)
         {
             String str = "";
@@ -55,6 +56,7 @@ namespace Maksligais_Intelekts_PD_1
             Game_Field_Value.Text = str;
         }
 
+        // Add option to choose who starts
         private void radioButton1_CheckedChanged(object sender, EventArgs e)
         {
             ai_Starts = false;
@@ -65,33 +67,20 @@ namespace Maksligais_Intelekts_PD_1
             ai_Starts = true;
         }
 
+        // Start the game, disable buttons that shouldn't be used
         private void button3_Click(object sender, EventArgs e)
         {
             radioButton1.Enabled = false;
             radioButton2.Enabled = false;
 
             button1.Enabled = true;
+            button2.Enabled = false;
             button3.Enabled = false;
             End_Game.Enabled = true;
 
             if (ai_Starts)
             {
-                Game_Turn.Text = ai_name;
-                GameState state = new GameState
-                {
-                    LineOfNumbers = Game_Field_Value.Text,
-                    CurrentPlayer = 1,
-                    Player1Score = 20,
-                    Player2Score = 20,
-                };
-                GameTreeNode node = GenerateGameTree(state, 8);
-
-                GameTreeNode nextMove = DetermineBestMove(node);
-                Game_Field_Value.Text = nextMove.State.LineOfNumbers;
-                Game_Turn.Text = player_name;
-                AI_Points.Text = nextMove.State.Player1Score.ToString();
-                AI_Move.Text = nextMove.State.Move.ToString();
-
+                ai_move();
             }
             else
             {
@@ -99,12 +88,14 @@ namespace Maksligais_Intelekts_PD_1
             }
         }
 
+        // End the game, reenable the disabled buttons, set the default values
         private void End_Game_Click(object sender, EventArgs e)
         {
             radioButton1.Enabled = true;
             radioButton2.Enabled = true;
 
             button1.Enabled = false;
+            button2.Enabled = true;
             button3.Enabled = true;
             End_Game.Enabled = false;
             AI_Points.Text = "20";
@@ -120,8 +111,14 @@ namespace Maksligais_Intelekts_PD_1
             Game_Field_Value.Text = str;
 
         }
+
+        // User chooses the number to remove, then we automatically launche the ai move
         private void button1_Click(object sender, EventArgs e)
         {
+            if (Game_Field_Value.Text.Length == 0) 
+            {
+                game_ends();
+            }
             if (Game_Turn.Text == player_name)
             {
                 string game_field = Game_Field_Value.Text;
@@ -135,25 +132,62 @@ namespace Maksligais_Intelekts_PD_1
                     int points = int.Parse(Player_Points.Text) - int.Parse(value);
                     Player_Points.Text = points.ToString();
 
-                    Game_Turn.Text = ai_name;
-                    GameState state = new GameState
+                    if (Game_Field_Value.Text.Length != 0)
                     {
-                        LineOfNumbers = Game_Field_Value.Text,
-                        CurrentPlayer = 1,
-                        Player1Score = int.Parse(AI_Points.Text),
-                        Player2Score = int.Parse(Player_Points.Text),
-                    };
-                    GameTreeNode node = GenerateGameTree(state, 8);
-
-                    GameTreeNode nextMove = DetermineBestMove(node);
-                    Game_Field_Value.Text = nextMove.State.LineOfNumbers;
-                    Game_Turn.Text = player_name;
-                    AI_Points.Text = nextMove.State.Player1Score.ToString();
-                    AI_Move.Text = nextMove.State.Move.ToString();
-                    Game_Turn.Text = player_name;
+                        ai_move();
+                    }
+                    else 
+                    {
+                        game_ends();
+                    }
                 }
             }
 
+        }
+
+        // Create new State for this move, to generate a tree, max depth is equal to chars left in the line
+        public void ai_move() 
+        {
+            Game_Turn.Text = ai_name;
+            GameState state = new GameState
+            {
+                LineOfNumbers = Game_Field_Value.Text,
+                CurrentPlayer = 1,
+                Player1Score = int.Parse(AI_Points.Text),
+                Player2Score = int.Parse(Player_Points.Text),
+            };
+            GameTreeNode node = GenerateGameTree(state, Game_Field_Value.Text.Length);
+
+            GameTreeNode nextMove = DetermineBestMove(node);
+            Game_Field_Value.Text = nextMove.State.LineOfNumbers;
+            Game_Turn.Text = player_name;
+            AI_Points.Text = nextMove.State.Player1Score.ToString();
+            AI_Move.Text = nextMove.State.Move.ToString();
+            if (Game_Field_Value.Text.Length == 0) 
+            {
+                game_ends();
+            }
+            Game_Turn.Text = player_name;
+        }
+
+        // The game ends, either of players are the Winner
+        public void game_ends() 
+        {
+            int player_points = int.Parse(Player_Points.Text);
+            int ai_points = int.Parse(AI_Points.Text);
+            button1.Enabled = false;
+            if (player_points > ai_points)
+            {
+                Winner_name.Text = player_name;
+            }
+            else if (ai_points == player_points) 
+            {
+                Winner_name.Text = "DRAW";
+            }
+            else
+            {
+                Winner_name.Text = player_name;
+            }
         }
 
         // Define a function to generate the game tree
@@ -163,7 +197,7 @@ namespace Maksligais_Intelekts_PD_1
             GameTreeNode node = new GameTreeNode(state);
 
             // If we've reached the maximum depth, return the node
-            if (depth == 0 || node.Children.Count == 0)
+            if (depth == 0)
             {
                 node.Score = state.Player1Score - state.Player2Score;
                 return node;
