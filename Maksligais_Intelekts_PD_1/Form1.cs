@@ -104,7 +104,7 @@ namespace Maksligais_Intelekts_PD_1
             Winner_name.Text = "";
             String str = "";
             Random rand = new Random();
-            for (int i = 0; i < 9; i++)
+            for (int i = 0; i < 10; i++)
             {
                 str += rand.Next(3);
             }
