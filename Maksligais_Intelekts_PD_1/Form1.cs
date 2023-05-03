@@ -261,7 +261,6 @@ namespace Maksligais_Intelekts_PD_1
                 Player2Score = state.Player2Score - (int)Char.GetNumericValue(state.LineOfNumbers.ElementAt(move));
             }
             string LineOfNumbers = state.LineOfNumbers.Remove(move, 1);
-            //Console.WriteLine(Player1Score + " | " + LineOfNumbers + " | " + Player2Score);
             // Create new state and return it with new values
             return new GameState
             {
