@@ -194,9 +194,8 @@
             this.Game_Field_Value.ForeColor = System.Drawing.Color.Green;
             this.Game_Field_Value.Location = new System.Drawing.Point(211, 46);
             this.Game_Field_Value.Name = "Game_Field_Value";
-            this.Game_Field_Value.Size = new System.Drawing.Size(56, 25);
+            this.Game_Field_Value.Size = new System.Drawing.Size(0, 25);
             this.Game_Field_Value.TabIndex = 18;
-            this.Game_Field_Value.Text = "0120";
             // 
             // label11
             // 
