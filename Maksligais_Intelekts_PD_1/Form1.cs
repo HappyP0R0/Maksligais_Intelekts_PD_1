@@ -212,7 +212,6 @@ namespace Maksligais_Intelekts_PD_1
                 GameTreeNode childNode = GenerateGameTree(possibleState, depth - 1);
                 node.Children.Add(childNode);
             }
-
             // If the current player is player 1 (maximizing player), find the child node with the highest score and set it as the node's score
             if (state.CurrentPlayer == 1)
             {
@@ -223,7 +222,6 @@ namespace Maksligais_Intelekts_PD_1
             {
                 node.Score = node.Children.Min(child => child.Score);
             }
-
             // Return the node
             return node;
         }
@@ -263,13 +261,14 @@ namespace Maksligais_Intelekts_PD_1
                 Player2Score = state.Player2Score - (int)Char.GetNumericValue(state.LineOfNumbers.ElementAt(move));
             }
             string LineOfNumbers = state.LineOfNumbers.Remove(move, 1);
+            //Console.WriteLine(Player1Score + " | " + LineOfNumbers + " | " + Player2Score);
             // Create new state and return it with new values
             return new GameState
             {
                 LineOfNumbers = LineOfNumbers,
                 Player1Score = Player1Score,
                 Player2Score = Player2Score,
-                CurrentPlayer = CurrentPlayer,
+                CurrentPlayer = CurrentPlayer == 1 ? 2 : 1,
                 Move = (int)Char.GetNumericValue(state.LineOfNumbers.ElementAt(move))
             };
         }
